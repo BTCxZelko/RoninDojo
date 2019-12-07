@@ -62,13 +62,26 @@ case $CHOICE in
         2)          
             echo -e "${RED}"
             echo "***"
-            echo "Do you have an existing Node or have the Initial Blockchain Data saved and want to transfer to Dojo?"
+            echo "Is your transfer complete?"
+            echo "***"
+            echo -e "${NC}"
             select yn in "Yes" "No"; do
                 case $yn in
                     Yes ) break;;
                     No ) bash ~/RoninDojo/Scripts/Menu/ronin-ibd-menu.sh
                 esac
             done
-            
-            
+            cd /mnt/usb/docker/volumes/my-dojo_data-bitcoind/_data/blocks
+            sudo rm -r LOCK
+            cd /mnt/usb/docker/volumes/my-dojo_data-bitcoind/_data/chainstate
+            sudo rm -r LOCK 
+            sudo chown -R 1105:1108 /mnt/usb/docker/volumes/my-dojo_data-bitcoind/_data/*
+            cd ~/dojo/docker/my-dojo
+            sudo ./dojo.sh start
+            echo -e "${RED}"
+            echo "check the bitcoind logs to verify the status"
+            echo -e "${NC}"
+            read -n 1 -r -s
+            bash ~/RoninDojo/Scripts/Menu/ronin-ibd-menu.sh 
+            ;;
             
