@@ -84,4 +84,8 @@ case $CHOICE in
             read -n 1 -r -s
             bash ~/RoninDojo/Scripts/Menu/ronin-ibd-menu.sh 
             ;;
-            
+        3)
+            bash ~/RoninDojo/Scripts/Menu/ronin-dojo-menu.sh
+            # return to main ronin.sh menu
+            ;;
+esac           
