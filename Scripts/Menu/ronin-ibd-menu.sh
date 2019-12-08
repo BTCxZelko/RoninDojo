@@ -41,14 +41,15 @@ case $CHOICE in
             echo "***"
             echo -e "${NC}"
             sudo ~/dojo/docker/my-dojo/dojo.sh stop
-            cd /mnt/usb/docker/volumes/my-dojo_data-bitcoind/_data/
-            sudo rm -r blocks chainstate
+            sudo rm -r /mnt/usb/docker/volumes/my-dojo_data-bitcoind/_data/blocks
+            sudo rm -r /mnt/usb/docker/volumes/my-dojo_data-bitcoind/_data/chainstate
+            USER=$(sudo cat /etc/passwd | grep 1000 | awk -F: '{ print $1}' | cut -c 1-)
             echo -e "${RED}"
             echo "***"
             echo "Copy and paste the following commands in the bitcoin directory (default is ~/.bitcoin) with your username of host machine in place of USERNAME"
             echo "Replace 192.168.X.XX with the IP address of your Dojo machine"
             echo "***"
-            echo "sudo scp -r blocks chainstate USERNAME@192.168.X.XX:/mnt/usb/docker/volumes/my-dojo_data-bitcoind/_data/ "
+            echo "sudo scp -r blocks chainstate $USER@192.168.X.XX:/mnt/usb/docker/volumes/my-dojo_data-bitcoind/_data/ "
             echo "***"
             sleep 3s
             echo "***"
