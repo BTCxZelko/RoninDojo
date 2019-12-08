@@ -132,7 +132,7 @@ case $CHOICE in
             # press any letter to return
             ;;
         7)
-	    bash ~/RoninDojo/Scripts/Menu/ronin-IBD-menu.sh
+	    bash ~/RoninDojo/Scripts/Menu/ronin-ibd-menu.sh
 	    # goes to IBD menu
 	    ;;
         8)
