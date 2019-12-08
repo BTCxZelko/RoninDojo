@@ -17,7 +17,7 @@ OPTIONS=(1 "Start Dojo"
          4 "Tor Hidden Service Address"
          5 "Upgrade Dojo"
          6 "Version Info"
-         7 "Clean Dojo"
+         7 "IBD Transfer"
          8 "Next Page"
          9 "Go Back")
 
@@ -136,8 +136,7 @@ case $CHOICE in
             echo -e "${NC}"
             sleep 3s
             cd ~/dojo/docker/my-dojo/
-            sudo ./dojo.sh version
-            
+            sudo ./dojo.sh version            
             echo -e "${RED}"
             echo "***"
             echo "Press any letter to return..."
@@ -149,17 +148,9 @@ case $CHOICE in
             # press any letter to return
             ;;
         7)
-            echo -e "${RED}"
-            echo "***"
-            echo "Deleting docker dangling images and images of previous versions in 15s..."
-            echo "Use Ctrl+C to exit if needed!"
-            echo "***"
-            echo -e "${NC}"
-            sleep 15s
-            cd ~/dojo/docker/my-dojo/
-            sudo ./dojo.sh clean
-            # free disk space by deleting docker dangling images and images of previous versions
-            ;;
+	    bash ~/RoninDojo/Scripts/Menu/ronin-IBD-menu.sh
+	    # goes to IBD menu
+	    ;;
         8)
             bash ~/RoninDojo/Scripts/Menu/ronin-dojo-menu2.sh
             # takes you to ronin dojo menu2
