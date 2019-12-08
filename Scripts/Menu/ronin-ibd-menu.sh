@@ -41,15 +41,19 @@ case $CHOICE in
             echo "***"
             echo -e "${NC}"
             sudo ~/dojo/docker/my-dojo/dojo.sh stop
+            
+            sudo mkdir /mnt/usb/bitcoin             
+            USER=$(sudo cat /etc/passwd | grep 1000 | awk -F: '{ print $1}' | cut -c 1-)
+            chown -R $USER:$USER /mnt/usb/bitcoin
+            
             sudo rm -r /mnt/usb/docker/volumes/my-dojo_data-bitcoind/_data/blocks
             sudo rm -r /mnt/usb/docker/volumes/my-dojo_data-bitcoind/_data/chainstate
-            USER=$(sudo cat /etc/passwd | grep 1000 | awk -F: '{ print $1}' | cut -c 1-)
             echo -e "${RED}"
             echo "***"
             echo "Copy and paste the following commands in the bitcoin directory (default is ~/.bitcoin) with your username of host machine in place of USERNAME"
             echo "Replace 192.168.X.XX with the IP address of your Dojo machine"
             echo "***"
-            echo "sudo scp -r blocks chainstate $USER@192.168.X.XX:/mnt/usb/docker/volumes/my-dojo_data-bitcoind/_data/ "
+            echo "sudo scp -r blocks chainstate $USER@192.168.X.XX:/mnt/usb/bitcoin "
             echo "***"
             sleep 3s
             echo "***"
@@ -73,10 +77,12 @@ case $CHOICE in
                     No ) bash ~/RoninDojo/Scripts/Menu/ronin-ibd-menu.sh
                 esac
             done
-            cd /mnt/usb/docker/volumes/my-dojo_data-bitcoind/_data/blocks
+            cd /mnt/usb/bitcoin/blocks
             sudo rm -r LOCK
-            cd /mnt/usb/docker/volumes/my-dojo_data-bitcoind/_data/chainstate
+            cd /mnt/usb/bitcoin/chainstate
             sudo rm -r LOCK 
+            cd /mnt/usb/bitcoin
+            sudo mv blocks chainstate /mnt/usb/docker/volumes/my-dojo_data-bitcoind/_data/
             sudo chown -R 1105:1108 /mnt/usb/docker/volumes/my-dojo_data-bitcoind/_data/*
             cd ~/dojo/docker/my-dojo
             sudo ./dojo.sh start
