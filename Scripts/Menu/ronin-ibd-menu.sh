@@ -28,6 +28,7 @@ case $CHOICE in
             echo -e "${RED}"
             echo "***"
             echo "Do you have an existing Node or have the Initial Blockchain Data saved and want to transfer to Dojo?"
+            echo -e "${NC}"
             select yn in "Yes" "No"; do
                 case $yn in
                     Yes ) break;;
