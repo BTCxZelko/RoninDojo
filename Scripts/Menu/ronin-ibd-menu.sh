@@ -46,13 +46,13 @@ case $CHOICE in
             echo -e "${RED}"
             echo "***"
             echo "Copy and paste the following commands in the bitcoin directory (default is ~/.bitcoin) with your username of host machine in place of USERNAME"
-            echo "Replace 192.168.X.XX with the IP address of your Dojo machine
+            echo "Replace 192.168.X.XX with the IP address of your Dojo machine"
             echo "***"
             echo "sudo scp -r blocks chainstate USERNAME@192.168.X.XX:/mnt/usb/docker/volumes/my-dojo_data-bitcoind/_data/ "
             echo "***"
             sleep 3s
             echo "***"
-            echo "when the transfer is complete...head to "Complete IBD""
+            echo "when the transfer is complete...head to Complete IBD"
             echo "***"
             echo "Press any letter to return..."
             echo "***"
