@@ -86,6 +86,6 @@ case $CHOICE in
             ;;
         3)
             bash ~/RoninDojo/Scripts/Menu/ronin-dojo-menu.sh
-            # return to main ronin.sh menu
+            # return to main ronin-dojo-menu.sh menu
             ;;
 esac           
