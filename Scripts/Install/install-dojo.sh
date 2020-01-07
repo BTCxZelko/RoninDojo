@@ -40,14 +40,14 @@ sleep 5s
 # start dojo setup
 echo -e "${RED}"
 echo "***"
-echo "Downloading and extracting latest Dojo release."
+echo "Downloading and extracting latest Ronin release."
 echo "***"
 echo -e "${NC}"
 cd ~
 sleep 5s
 mkdir ~/.dojo
 cd ~/.dojo
-git clone -b master https://github.com/Samourai-Wallet/samourai-dojo.git
+git clone -b electrs https://github.com/BTCxZelko/samourai-dojo.git
 sleep 2s
 
 echo -e "${RED}"
@@ -67,41 +67,7 @@ echo "***"
 echo -e "${NC}"
 sleep 2s
 rm -rvf samourai-dojo/
-
-echo -e "${RED}"
-echo "***"
-echo "Editing the bitcoin docker file, using the aarch64-linux-gnu.tar.gz source."
-echo "***"
-echo -e "${NC}"
-sed -i '9d' ~/dojo/docker/my-dojo/bitcoin/Dockerfile
-sed -i '9i             ENV     BITCOIN_URL         https://bitcoincore.org/bin/bitcoin-core-0.19.0.1/bitcoin-0.19.0.1-aarch64-linux-gnu.tar.gz' ~/dojo/docker/my-dojo/bitcoin/Dockerfile
-sed -i '10d' ~/dojo/docker/my-dojo/bitcoin/Dockerfile
-sed -i '10i            ENV     BITCOIN_SHA256      c258c6416225afb08c4396847eb3d5da61a124f1b5c61cccb5a2e903e453ce7f' ~/dojo/docker/my-dojo/bitcoin/Dockerfile
-sleep 2s
-# method used with the sed command is to delete entire lines 9, 10 and add new lines 9, 10
-# double check ~/dojo_dir/docker/my-dojo/bitcoin/Dockerfile
-
-echo -e "${RED}"
-echo "***"
-echo "Editing mysql dockerfile to use a compatible database."
-echo "***"
-echo -e "${NC}"
-sed -i '1d' ~/dojo/docker/my-dojo/mysql/Dockerfile
-sed -i '1i             FROM    mariadb:latest' ~/dojo/docker/my-dojo/mysql/Dockerfile
-sleep 2s
-# method used with the sed command is to delete line 1 and add new line 1
-# double check ~/dojo_dir/docker/my-dojo/mysql/Dockerfile
-
-echo -e "${RED}"
-echo "***"
-echo "Editing the Tor dockerfile, using the aarch64-linux-gnu.tar.gz source."
-echo "***"
-echo -e "${NC}"
-sed -i '12d' ~/dojo/docker/my-dojo/tor/Dockerfile
-sed -i '12i ENV     GOLANG_ARCHIVE      go1.13.5.linux-arm64.tar.gz' ~/dojo/docker/my-dojo/tor/Dockerfile
-sed -i '13d' ~/dojo/docker/my-dojo/tor/Dockerfile
-sed -i '13i ENV     GOLANG_SHA256       227b718923e20c846460bbecddde9cb86bad73acc5fb6f8e1a96b81b5c84668b' ~/dojo/docker/my-dojo/tor/Dockerfile
-sleep 2s
+sleep 1s
 
  # creating a 1GB swapfile
 sudo fallocate -l 1G /swapfile
@@ -201,7 +167,7 @@ BITCOIND_MAX_MEMPOOL=400
 
 # Db cache size in MB
 # Type: integer
-BITCOIND_DB_CACHE=1024
+BITCOIND_DB_CACHE=700
 
 # Number of threads to service RPC calls
 # Type: integer
@@ -242,7 +208,7 @@ BITCOIND_EPHEMERAL_HS=on
 # Warning: Do not expose your RPC API to internet!
 # See BITCOIND_RPC_EXTERNAL_IP
 # Value: on | off
-BITCOIND_RPC_EXTERNAL=on
+BITCOIND_RPC_EXTERNAL=off
 
 # IP address used to expose the RPC API to external apps
 # This parameter is inactive if BITCOIND_RPC_EXTERNAL isn't set to 'on'
@@ -404,9 +370,74 @@ MYSQL_USER=$MYSQL_USER
 MYSQL_PASSWORD=$MYSQL_PASSWORD
 " | sudo tee -a ~/dojo/docker/my-dojo/conf/docker-mysql.conf.tpl 
 
+# BTC-EXPLORER PASSWORD
+echo -e "${RED}"
+echo "Installing your Dojo-backed Bitcoin Explorer"
+sleep 1s
+echo -e "${YELLOW}"
+echo "This password should be something you can remember and is alphanumerical"
+sleep 1s
+echo -e "${NC}"
+if [ ! -f ~/dojo/docker/my-dojo/conf/docker-explorer.conf ]; then
+    read -p 'Your Dojo Explorer password: ' EXPLORER_PASS
+    sleep 1s
+    echo -e "${YELLOW}"
+    echo "----------------"
+    echo "$EXPLORER_PASS"
+    echo "----------------"
+    echo -e "${RED}"
+    echo "Is this correct?"
+    echo -e "${NC}"
+    select yn in "Yes" "No"; do
+        case $yn in
+            Yes ) break;;
+            No ) read -p 'New Dojo Explorer password: ' EXPLORER_PASS
+            echo "$EXPLORER_PASS"
+        esac
+    done
+    echo -e "${RED}"
+    echo "$EXPLORER_PASS"
+else
+    echo "Explorer is already installed"
+fi
+
+rm -rf ~/dojo/docker/my-dojo/conf/docker-explorer.conf.tpl
+echo "
+#########################################
+# CONFIGURATION OF EXPLORER CONTAINER
+#########################################
+
+
+# Install and run a block explorer inside Dojo (recommended)
+# Value: on | off
+EXPLORER_INSTALL=on
+
+
+# Password required for accessing the block explorer
+# (login can be anything)
+# Keep this password secret!
+# Provide a value with a high entropy!
+# Type: alphanumeric
+EXPLORER_KEY=$EXPLORER_PASS
+" | sudo -a tee ~/dojo/docker/my-dojo/conf/docker-explorer.conf.tpl
+sleep 1s
+
+# Install Electrs or not
+echo -e "${RED}"
+echo "Do you want to install Electrs?"
+echo -e "${NC}"
+select yn in "Yes" "No"; do
+    case $yn in
+        Yes ) sed -i '8d' ~/dojo/docker/my-dojo/conf/docker-explorer.conf.tpl
+              sed -i '8i ELECTRS_INSTALL=on' ~/dojo/docker/my-dojo/conf/docker-explorer.conf.tpl
+        No ) break;;
+    esac
+done
+sleep 1s 
+
 echo -e "${RED}"
 echo "***"
-echo "See documentation at https://github.com/Samourai-Wallet/samourai-dojo/blob/master/doc/DOCKER_setup.md"
+echo "See documentation at https://github.com/RoninDojo/RoninDojo/wiki"
 echo "***"
 echo -e "${NC}"
 sleep 5s
@@ -417,6 +448,6 @@ echo "***"
 echo "Installing Dojo..."
 echo "***"
 echo -e "${NC}"
-sleep 5s
+sleep 2s
 cd ~/dojo/docker/my-dojo
 sudo ./dojo.sh install
