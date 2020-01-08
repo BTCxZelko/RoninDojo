@@ -47,7 +47,7 @@ cd ~
 sleep 5s
 mkdir ~/.dojo
 cd ~/.dojo
-git clone -b electrs https://github.com/BTCxZelko/samourai-dojo.git
+git clone -b master https://github.com/RoninDojo/samourai-dojo.git
 sleep 2s
 
 echo -e "${RED}"
@@ -421,19 +421,6 @@ EXPLORER_INSTALL=on
 EXPLORER_KEY=$EXPLORER_PASS
 " | sudo -a tee ~/dojo/docker/my-dojo/conf/docker-explorer.conf.tpl
 sleep 1s
-
-# Install Electrs or not
-echo -e "${RED}"
-echo "Do you want to install Electrs?"
-echo -e "${NC}"
-select yn in "Yes" "No"; do
-    case $yn in
-        Yes ) sed -i '8d' ~/dojo/docker/my-dojo/conf/docker-explorer.conf.tpl
-              sed -i '8i ELECTRS_INSTALL=on' ~/dojo/docker/my-dojo/conf/docker-explorer.conf.tpl
-        No ) break;;
-    esac
-done
-sleep 1s 
 
 echo -e "${RED}"
 echo "***"
